@@ -1,0 +1,27 @@
+name: Deploy Node Application
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: CheckOut Sourse Code
+              uses: actions/checkout@v4
+            - name: Login to docker hub
+              run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+            - name: Build Docker Image
+              run: docker build -t goyalbites/nodejs_app .
+            - name: Publish Images to docker hub
+              run: docker push goyalbites/nodejs_app:latest
+
+    deploy:
+        needs: build 
+        runs-on: self-hosted
+        steps:
+            - name: Pull Image from Docker Hub
+              run: docker pull goyalbites/nodejs_app:latest
+            - name: Run Docker Container
+              run: docker -d -p 4000:4000 --name nodejs-app-container -e NODEJS_ENV=`${{ secrets.NODEJS_ENV }}` goyalbites/nodejs_app
