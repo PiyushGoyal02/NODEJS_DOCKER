@@ -24,4 +24,4 @@ jobs:
             - name: Pull Image from Docker Hub
               run: docker pull goyalbites/nodejs_app:latest
             - name: Run Docker Container
-              run: docker -d -p 4000:4000 --name nodejs-app-container -e NODEJS_ENV=`${{ secrets.NODEJS_ENV }}` goyalbites/nodejs_app
+              run: docker run -d -p 4000:4000 --name nodejs-app-container -e NODEJS_ENV=`${{ secrets.NODEJS_ENV }}` goyalbites/nodejs_app
